@@ -1,0 +1,41 @@
+Expansion Pack 1: The "Council of AIs" (Multi-Agent System)
+
+Instead of one single model making decisions, you build a distributed system of specialized "Agents" that must debate each other before a trade is approved. This is very popular in 2024/2025 research (often called "Mixture of Experts").
+
+    The Analyst Agent (LLM): Scrapes news and Twitter. It doesn't look at charts; it only reads text. It outputs a sentiment score (0-100).
+
+    The Chartist Agent (Transformer/Chronos): Looks only at price action and technicals. It is blind to the news.
+
+    The On-Chain Agent (Web3): Watches the blockchain directly (see Expansion Pack 3). It flags if "Whales" are moving money to exchanges (usually a sell signal).
+
+    The Supreme Court (Meta-Model): A simple logistic regression model that takes the inputs from the three agents above. If the Analyst says "Buy," but the On-Chain Agent says "Whale Dump Imminent," the Court rules HOLD.
+
+Expansion Pack 2: Upgrade Your Brain (Foundation Models)
+
+LSTMs (from your original list) are solid but slightly dated (2018 era). The "cool" new tech in Time Series forecasting involves Foundation Models—basically "LLMs for Numbers."
+
+    Chronos (by Amazon): It treats time-series data like language tokens. It’s pre-trained on billions of data points. You can fine-tune it on your specific crypto pair.
+
+    Time-GPT (by Nixtla): Another generative pre-trained transformer specifically for time series.
+
+    Why it's cool: These models can often perform "Zero-Shot" forecasting—predicting the future of a coin they have never seen before, just based on its recent pattern.
+
+Expansion Pack 3: The "Eye of Sauron" (On-Chain Analysis)
+
+Most bots only look at Centralized Exchange (CEX) data (Binance/Coinbase). But crypto actually happens on the blockchain. If you look at the chain, you see the future before it hits the exchange.
+
+    Whale Watching: Use Web3.py to monitor the top 100 wallet addresses for the coin you are trading.
+
+        Logic: If a wallet holding $10M of ETH suddenly moves it to a Binance Deposit Address, a dump is likely coming in ~10 minutes. Your bot can front-run the crash.
+
+    Mempool Scanning: (Advanced) Watch the "pending" transactions in the blockchain mempool. This is how MEV (Maximal Extractable Value) bots work.
+
+Expansion Pack 4: The "Pro" UI (TradingView Integration)
+
+Since you are using Streamlit, don't settle for static matplotlib images.
+
+    Library: streamlit-lightweight-charts (A wrapper for TradingView's library).
+
+    Feature: This gives you a fully interactive financial chart inside Streamlit. You can zoom, pan, and draw lines.
+
+    The Cool Part: Overlay your Bot's Brain on the chart. Plot a little "Robot Icon" exactly where your bot bought/sold, and color-code the background based on the bot's internal "Confidence Score" (e.g., Green background = Bot is 90% sure price will go up).

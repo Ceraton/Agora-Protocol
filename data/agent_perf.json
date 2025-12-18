@@ -1,0 +1,9 @@
+{
+    "timestamp": "2025-12-18T00:28:41.393273",
+    "weights": {
+        "TrendAgent": 1.5,
+        "OscillatorAgent": 0.4932922872009999,
+        "VolumeAgent": 0.3912695358648402,
+        "ChronosAgent": 1.0
+    }
+}

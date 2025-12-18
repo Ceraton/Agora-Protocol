@@ -1,0 +1,69 @@
+"Knife Catching" is the most dangerous but potentially profitable form of Mean Reversion. In engineering terms, you are betting on Elasticity: the assumption that if price stretches too far from its average (physics), it must snap back.
+
+To implement this safely within your architecture, we treat it as a "Black Swan" Protocol. It requires its own dedicated Agent and a specific execution logic that differs from standard trading.
+
+Here is the blueprint for the "Newton Agent" (Action = Reaction).
+1. The Strategy Logic (The Physics of a Crash)
+
+A falling knife isn't just "price went down." It is defined by Standard Deviations (σ).
+
+    Normal Trade: Price is 1$\sigma$ or 2$\sigma$ from the Mean (Bollinger Bands).
+
+    Knife Catch: Price is 4$\sigma$ or 5$\sigma$ away. It is a statistical anomaly.
+
+The Entry Triggers:
+
+    Velocity: Price drops > 3% in 5 minutes.
+
+    Extension: Price is > 5% below the 200 EMA.
+
+    Exhaustion: RSI (Relative Strength Index) < 15 (Standard is 30).
+
+    Climax: Volume spike > 5x the 20-minute average (Panic Selling).
+
+2. The Agent: NewtonAgent
+
+This agent remains Silent (Returns Vote.HOLD) 99% of the time. It only wakes up during crashes.
+
+3. Execution: The "Limit Ladder" (Game Dev Style)
+
+You never market buy a falling knife. You set a trap. Instead of one order, the Execution Engine fires a Ladder of limit orders deeper into the crash.
+
+The Ladder Logic:
+
+    Rung 1: Buy 20% size @ Current Price - 1%.
+
+    Rung 2: Buy 30% size @ Current Price - 2%.
+
+    Rung 3: Buy 50% size @ Current Price - 4%.
+
+Why? If it keeps crashing, you get a better average price. If it bounces instantly, you at least caught some of it.
+4. Aristotelian Guardrails (The Safety)
+
+Your Aristotle Validator must be updated. Normally, Aristotle hates high risk. But for Knife Catching, we appeal to the Virtue of Courage—but tempered by Temperance (Size).
+
+Rule Update:
+
+    If Strategy == "Knife Catch":
+
+        Max Position Size: Reduced to 0.5% of Portfolio (Standard is 2%).
+
+        Take Profit: Immediate. Sell at 1.5% profit. Do not hold for a home run.
+
+        Time Limit: If profit is not hit in 15 minutes, SELL at market. (A knife that stops falling but doesn't bounce is a "Dead Knife"—very dangerous).
+
+5. Streamlit Visualization (The "Impact Zone")
+
+In your Dashboard, add a visual for "Distance from Mean."
+
+Summary of Implementation
+
+    Strategy: Add NewtonAgent to your Council. It usually sleeps.
+
+    Execution: Modify order_executor.py to support submit_ladder_order() (batching 3 limit orders).
+
+    Risk: Update AristotleValidator to allow high-risk trades only if size is < 0.5%.
+
+    Exit: Implement a "Time-Based Stop" (e.g., close_position_after_seconds(900)).
+
+This allows you to catch knives with "Math" rather than "Gut," keeping your complex engineering approach intact.

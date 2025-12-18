@@ -1,0 +1,57 @@
+# 📊 Training Logs Analysis Guide
+
+This guide explains the metrics found in your PPO training logs (`logs/training_log.csv`). Use this to diagnose the health of your AI agent.
+
+---
+
+## ⏱️ Section 1: Time Metrics (`time/`)
+
+### `fps` (Frames Per Second)
+*   **Definition**: The speed at which your computer generates data and trains the model.
+*   **Target**: High numbers (e.g., **1,000+**) indicate efficient simulation.
+*   **Warning**: Low numbers (< 100) mean training will be slow. Likely caused by complex reward calculations or insufficient CPU power.
+
+### `iterations`
+*   **Definition**: The number of training loops completed.
+*   **Context**: 1 iteration = `n_steps` (typically 2048 samples).
+
+### `total_timesteps`
+*   **Definition**: The total number of candles/hours the AI has experienced.
+*   **Formula**: `iterations * n_steps`.
+
+---
+
+## 🧠 Section 2: Training Metrics (`train/`)
+
+### `approx_kl` (Divergence)
+*   **Definition**: Measures how much the AI's policy changed this update. PPO aims for small, stable changes.
+*   **✅ Good**: Small, stable values (0.001 - 0.05).
+*   **❌ Bad**: Large spikes (> 0.1). Indicates instability ("Catastrophic Forgetting").
+*   **Fix**: Lower the `learning_rate`.
+
+### `clip_fraction`
+*   **Definition**: Percentage of updates that were "too extreme" and clipped by safety limits.
+*   **✅ Good**: Low values (0.01 - 0.15).
+*   **❌ Bad**: High values (> 0.3). The AI is trying to change too fast.
+*   **Fix**: Lower `learning_rate` or increase `batch_size`.
+
+### `entropy_loss` (Exploration)
+*   **Definition**: Measures the randomness of the AI's actions.
+*   **✅ Good**: Starts high, decreases *slowly*.
+*   **❌ Bad**: Rapid drop to zero. Indicates the AI has stopped exploring (e.g., "Always Hold").
+*   **Fix**: Increase `ent_coef` (Entropy Coefficient).
+
+### `explained_variance` (Critic Accuracy)
+*   **Definition**: How well the Value Network (Critic) predicts future rewards.
+*   **✅ Good**: Positive values approaching **1.0**.
+*   **❌ Bad**: Near **0** or **Negative**. The Critic is guessing randomly.
+*   **Fix**: Normalize rewards (`VecNormalize`) or increase network size.
+
+### `value_loss` (Prediction Error)
+*   **Definition**: The total error of the Critic's predictions.
+*   **✅ Good**: Low and decreasing.
+*   **❌ Bad**: High or exploding. Destabilizes the entire agent.
+
+### `policy_gradient_loss`
+*   **Definition**: Measures the improvement of the Actor's decision-making.
+*   **Status**: Usually noisy and negative. Focus on `approx_kl` instead for stability checks.

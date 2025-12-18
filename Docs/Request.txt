@@ -1,0 +1,91 @@
+. Signal Generation Layer (The "Strategy Engine")
+
+Goal: A modular framework for generating trade signals using deterministic algorithms or probabilistic AI models.
+
+    Operation Modes (The "Council" Logic):
+
+        Ensemble Mode (Council): A "voting" system where multiple distinct models (Sentiment, Technical, On-Chain) must reach a consensus threshold to trigger an order.
+
+        Single-Model Mode (Solo): Direct execution based on the output of a specific strategy (e.g., only the RSI Model).
+
+        System Idle (Off): Signal generation is active for logging purposes, but order routing is disabled.
+
+    Algorithmic Strategies:
+
+        Momentum Strategies: RSI, MACD (Trend Following).
+
+        Mean Reversion Strategies: Bollinger Bands, Keltner Channels (Betting on price returning to average).
+
+        Multivariate Strategy: A weighted composite index combining RSI, MACD, and EMA into a single "Confidence Score" (0.0 - 1.0).
+
+2. Machine Learning Pipeline (The "Training Environment")
+
+Goal: A closed-loop system for acquiring data, training models, and validating performance before deployment.
+
+    Data Ingestion & Normalization:
+
+        ETL Process: Extract 2 years of OHLCV (Open, High, Low, Close, Volume) data for BTC/ETH.
+
+        Preprocessing: Normalize data (Scaling/Standardization) to ensure the AI isn't biased by the massive price difference between 2022 and 2024.
+
+    Model Optimization Objectives:
+
+        Predictive Accuracy (Supervised Learning): Minimizing "Mean Squared Error" (MSE). The model is rewarded for correctly predicting the price at t+1.
+
+        Profit Maximization (Reinforcement Learning): Maximizing the Sharpe Ratio. The model is rewarded purely for Portfolio Growth, even if its price predictions are sometimes wrong (e.g., capturing big trends, ignoring small chop).
+
+3. Simulation Environment ("Paper Trading")
+
+Goal: A risk-free sandbox that mimics the behavior of a live exchange with high fidelity.
+
+    Virtual Matching Engine:
+
+        Does not route orders to a CEX (Centralized Exchange).
+
+        Market Data Feed: Subscribes to live WebSocket (WSS) feeds from Binance/Coinbase for real-time pricing.
+
+        Latency Simulation: Artificially introduces a random delay (e.g., 50ms - 200ms) to model network lag.
+
+        Slippage & Fees: The simulator must subtract simulated fees and adjust execution price based on order book depth (slippage).
+
+4. System Lifecycle (Initialization & Termination)
+
+Goal: Ensuring state persistence and capital preservation during startup and shutdown events.
+
+    Initialization Routine (Cold Start):
+
+        State Hydration: Loads portfolio_state.json (positions, balance) from the local database.
+
+        Safety Lock: System defaults to "Disconnected" state. Operator must manually authorize API handshake.
+
+        Reconciliation: (If Live) Queries the Exchange API to verify that the local database matches the actual wallet balance.
+
+    Termination Routine (Graceful Shutdown):
+
+        State Persistence: Serializes all active objects (Trade Logs, PnL Metrics) to disk.
+
+        Order Flush: Critical safety step—cancels all "Open Orders" on the exchange to prevent "Zombie Orders" from filling while the bot is offline.
+
+        Session Teardown: Closes WebSocket connections cleanly.
+
+5. Operator Interface (The Terminal)
+
+Goal: A Streamlit-based control center for configuration, monitoring, and manual intervention.
+
+    System Controls:
+
+        Master Toggle: Enable/Disable Order Routing.
+
+        Environment Switch: Toggle between LIVE (Real Money) and PAPER (Simulation). Requires restart to prevent accidental real trades.
+
+    Strategy Management:
+
+        Model Selection: Dropdown to load specific .h5 or .pt model weights.
+
+        Training Interface: Trigger a background training job on a selected dataset directly from the UI.
+
+    Risk Management:
+
+        Emergency Liquidation: A "Panic Button" that executes a Market Sell All command to cash out immediately.
+
+        Shutdown Command: Safely triggers the Termination Routine.
